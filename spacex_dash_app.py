@@ -62,8 +62,16 @@ app.layout = html.Div(children=[html.H1('SpaceX Launch Records Dashboard',
 
 def get_pie_chart(entered_site):
     if entered_site == 'ALL':
+        success_counts = spacex_df.groupby('Launch Site')['class'].sum()
+        total_counts = spacex_df.groupby('Launch Site')['class'].count()
+        success_ratio = success_counts/total_counts
+        success_ratio_df = pd.DataFrame({
+          'Launch Site': success_ratio.index,
+          'Success Ratio': success_ratio.values
+        })
         # If all sites are selected, calculate the total success count per launch site
-        fig = px.pie(spacex_df, names='Launch Site', title='Total Successful Launches by Site')  
+        fig = px.pie(success_ratio_df, names='Launch Site', values = 'Success Ratio',
+                     title='Total Successful Launches by Site')  
         
     else:
         # If a specific site is selected, filter for that site and show success vs. failed counts
